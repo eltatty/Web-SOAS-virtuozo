@@ -1,0 +1,17 @@
+version: "3.5"
+services:
+    nemo:
+        build: 
+                context: ./nemo
+                dockerfile: Dockerfile
+        container_name: nemo_box
+        ports: 
+                - 8085:8085
+    virtuoso:
+        build:
+                context: ./virtuoso
+                dockerfile: Dockerfile
+        container_name: virtuoso_box       
+        ports: 
+                - 1111:1111
+                - 8890:8890

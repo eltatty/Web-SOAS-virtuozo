@@ -1,0 +1,43 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    </meta>
+    <link rel="stylesheet" href="css/index.css">
+<!--    <link th:href="@{css/index.css}" href="public/css/index.css"-->
+<!--          rel="stylesheet" type="text/css" media="screen"/>-->
+    <link rel="stylesheet" href="css/content.css">
+    <title>SemanticOpenApi</title>
+</head>
+
+<body>
+<div class="container full-height-grow">
+    <header class="main-header">
+        <nav class="main-nav">
+            <ul>
+                <li><a href="./">Home</a></li>
+                <li><a href="query">Query</a></li>
+                <li><a href="ontologies">Ontologies</a></li>
+                <li><a href="./">Paper</a></li>
+                <li><a href="http://www.intelligence.tuc.gr/">Lab</a></li>
+            </ul>
+        </nav>
+    </header>
+    <div class="content">
+        <h1 class="title">OpenAPI Service Uploading</h1>
+        <span class="subtittle">Convert to Ontology</span>
+        <br>
+        <form action="upload" method="post" enctype="multipart/form-data">
+            <div><input class="file" type="file" name="files" multiple></div>
+            <input class="upload" type="submit" value="Upload"></input>
+        </form>
+    </div>
+</div>
+<!-- <div style="flex-grow: 1; background-color: red;"></div> -->
+<footer class="main-footer">
+    <!-- <img class="logo-img" src="images/tt.png" alt=""> -->
+    <!-- <img class="logo-img" src="images/tt.png" alt=""> -->
+</footer>
+</body>
+
+</html>

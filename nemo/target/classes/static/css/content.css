@@ -1,0 +1,30 @@
+.content {
+  display: flex;
+  flex-direction: column;
+  margin-left: 15px;
+  margin-top: 200px;
+}
+
+.subtittle {
+  font-size: 1.5rem;
+  color: #4c276d;
+  font-family: Poppins, sans-serif;
+}
+
+.title {
+  font-size: 2rem;
+  color: #4c276d;
+  font-family: Poppins, sans-serif;
+  font-weight: 500;
+}
+
+.upload {
+  color: rgb(76, 39, 109, 0.8);
+  background-color: rgb(81, 50, 144, 0.4);
+  border-width: 0;
+  padding: 1rem 2rem;
+  border-radius: 0.5rem;
+  text-decoration: none;
+  font-size: 1.6rem;
+  margin-top: 40px;
+}

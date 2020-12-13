@@ -1,0 +1,36 @@
+<!DOCTYPE html>
+<html  xmlns:th="http://www.thymeleaf.org">
+<html lang="en">
+<head>
+    <meta charset="UTF-8" />
+    <link rel="stylesheet" href="css/ontologies.css" />
+    <link rel="stylesheet" href="css/index.css" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Ontologies</title>
+</head>
+<body>
+<div class="container full-height-grow">
+    <header class="main-header">
+        <nav class="main-nav">
+            <ul>
+                <li><a href="./">Home</a></li>
+                <li><a href="query">Query</a></li>
+                <li><a href="ontologies">Ontologies</a></li>
+                <li><a href="./">Paper</a></li>
+                <li><a href="http://www.intelligence.tuc.gr/">Lab</a></li>
+            </ul>
+        </nav>
+    </header>
+
+<!--<h1>List of Files:</h1>-->
+    <div class="ontologyList" th:each="file: ${products}">
+        <a th:href="@{'./file/'+${file.getName()}}"><span th:text="${file.getName()}"/></a>
+        <span th:text="${file.length()/1024}"/><span>KB</span>
+    </div>
+</div>
+<footer class="main-footer">
+    <!-- <img class="logo-img" src="images/tt.png" alt=""> -->
+    <!-- <img class="logo-img" src="images/tt.png" alt=""> -->
+</footer>
+</body>
+</html>
