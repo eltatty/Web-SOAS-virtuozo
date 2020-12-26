@@ -1,0 +1,253 @@
+A {
+  font-family: Tahoma;
+  font-size: 11px;
+  font-weight: BOLD;
+  color: #336699;
+  text-decoration: none;
+}
+
+A:hover {
+  text-decoration: underline;
+}
+
+A.ntext {
+  font-family: Tahoma;
+  font-size: 13px;
+  font-weight: normal;
+  color: #336699;
+  text-decoration: none;
+}
+
+A.ntext:hover {
+  text-decoration: underline;
+}
+
+A.otherfont {
+  font-family: Tahoma;
+  font-size: 11px;
+  font-weight: BOLD;
+  color: #ffffff;
+  text-decoration: none;
+}
+
+A.otherfont:hover {
+  text-decoration: underline;
+}
+
+.textbox {
+  border-bottom: 1 solid black;
+  border-top: 1 solid black;
+  border-left: 1 solid black;
+  border-right: 1 solid black;
+  background-color: #f5f5f5;
+  font-family: Tahoma;
+  font-size: 11px;
+}
+
+.combo {
+  font-family: Tahoma;
+  font-size: 11px;
+}
+
+.ntextbox {
+  background-color: #f5f5f5;
+  font-family: Tahoma;
+  font-size: 11px;
+}
+
+.subm {
+  border-bottom: 1 solid black;
+  border-top: 1 solid black;
+  border-left: 1 solid black;
+  border-right: 1 solid black;
+  cursor: hand;
+  font-family: Tahoma;
+  font-size: 11px;
+  background-color: #cccc99;
+}
+
+.outer {
+  visibility: hidden;
+  position: absolute;
+  top: 150px;
+  background-color: black;
+  /* layer-background-color: black; */
+}
+
+.inner {
+  position: relative;
+  top: 1px;
+  left: 1px;
+  background-color: white;
+  /* layer-background-color: white; */
+}
+
+.ntext {
+  font-family: Tahoma, Arial, Helvetica, sans-serif;
+  font-size: 13px;
+  color: #326690;
+  font-weight: normal;
+}
+
+.ntextbold {
+  font-family: Tahoma, Arial, Helvetica, sans-serif;
+  font-size: 14px;
+  color: #326690;
+  font-weight: bold;
+}
+
+.ntextsmall {
+  font-family: Arial, Helvetica, sans-serif;
+  font-size: 11px;
+  color: #326690;
+  font-weight: normal;
+}
+
+.ntextblue {
+  font-family: Tahoma;
+  font-size: 11px;
+  color: #336699;
+  font-weight: bold;
+}
+
+.ntextbluelight {
+  font-family: Tahoma;
+  font-size: 11px;
+  color: #0000ff;
+  font-weight: bold;
+}
+
+.ntextred {
+  color: #ff0000;
+  font-weight: bold;
+  font-family: Tahoma;
+  font-size: 11px;
+}
+
+.ntextgreen {
+  color: #009000;
+  font-weight: bold;
+  font-family: Tahoma;
+  font-size: 11px;
+}
+
+.ntextgrey {
+  color: #808080;
+  font-weight: bold;
+  font-family: Tahoma;
+  font-size: 11px;
+}
+
+.currpage {
+  padding-right: 10px;
+  padding-left: 10px;
+  background-color: #cccc99;
+}
+
+.otherpage {
+  padding-right: 10px;
+  padding-left: 10px;
+  background-color: #336699;
+}
+
+.lastpage {
+  padding-right: 10px;
+  padding-left: 10px;
+  background-color: #336699;
+}
+
+.currfont {
+  font-family: Tahoma;
+  font-size: 11px;
+  font-weight: BOLD;
+  color: #003366;
+}
+
+.otherfont {
+  font-family: Tahoma;
+  font-size: 11px;
+  font-weight: BOLD;
+  color: #ffffff;
+}
+
+.caption {
+  /* white window title */
+  font-family: Arial, Helvetica, sans-serif;
+  font-size: 16px;
+  font-weight: bold;
+  color: #ffffff;
+}
+
+.caption2 {
+  /* white window title */
+  font-family: Tahoma, Helvetica, sans-serif;
+  font-size: 13px;
+  font-weight: normal;
+  color: #ffffff;
+}
+
+.title {
+  /* window title */
+  font-family: Arial, Helvetica, sans-serif;
+  font-size: 16px;
+  font-weight: bold;
+  color: #326690;
+  /*	text-align:		center; */
+}
+
+.bigtitle {
+  /* window title */
+  font-family: Arial, Helvetica, sans-serif;
+  font-size: 20px;
+  font-weight: bold;
+  color: #003366;
+  /*	text-align:		center; */
+}
+
+.info {
+  font-family: Tahoma;
+  font-size: 14px;
+  font-weight: bold;
+  color: #ff0000;
+}
+
+.status {
+  font-family: Tahoma;
+  font-weight: bold;
+  font-size: 11px;
+  color: #708090;
+}
+
+.header {
+  font-family: Arial, Helvetica, sans-serif;
+  font-weight: bold;
+  font-size: 12px;
+  color: #326690;
+}
+
+.redheader {
+  font-family: Arial, Helvetica, sans-serif;
+  font-weight: bold;
+  font-size: 12px;
+  color: #ff0000;
+}
+
+.bgprop {
+  background-repeat: no-repeat;
+  background-position: right;
+}
+
+.footer {
+  display: flex;
+  flex-direction: column;
+}
+
+.footer a {
+  font-weight: normal;
+}
+
+.daddyFooter {
+  display: flex;
+  justify-content: center;
+  margin-top: 20px;
+}

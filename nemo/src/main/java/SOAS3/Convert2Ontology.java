@@ -315,7 +315,7 @@ public class Convert2Ontology {
 
 		if(Parameter.getSchema()!=null){
 
-			Individual schemaInd=parseSchemaObject(ontModel,null,Parameter.getSchema(),schemas);
+			Individual schemaInd=parseSchemaObject(ontModel,null, null, Parameter.getSchema(),schemas);
 			ontModel.add(ontModel.createStatement(headerInd, ontModel.getProperty(OpenApiOntUtils.schemaURI),schemaInd));
 		}
 		if(Parameter.getContent()!=null) {
@@ -340,7 +340,7 @@ public class Convert2Ontology {
 		//Extract the schema defining the type used for the parameter.
 		if(header.getSchema()!=null){
 
-			Individual schemaInd=parseSchemaObject(ontModel,null,header.getSchema(),schemas);
+			Individual schemaInd=parseSchemaObject(ontModel,null, null, header.getSchema(),schemas);
 			ontModel.add(ontModel.createStatement(headerInd, ontModel.getProperty(OpenApiOntUtils.schemaURI),schemaInd));
 		}
 		//Extract a map containing the representations for the parameter
@@ -378,7 +378,7 @@ public class Convert2Ontology {
 		ontModel.add(ontModel.createStatement(parameterInd, ontModel.getProperty(OpenApiOntUtils.styleURI),styleInd));
 		//Extract the schema defining the type used for the parameter.
 		if(Parameter.getSchema()!=null){
-			Individual schemaInd=parseSchemaObject(ontModel,null,Parameter.getSchema(),schemas);
+			Individual schemaInd=parseSchemaObject(ontModel,null, null, Parameter.getSchema(),schemas);
 			ontModel.add(ontModel.createStatement(parameterInd, ontModel.getProperty(OpenApiOntUtils.schemaURI),schemaInd));
 		}
 		//Extract a map containing the representations for the parameter
@@ -405,7 +405,7 @@ public class Convert2Ontology {
 		ontModel.add(ontModel.createStatement(parameterInd, ontModel.getProperty(OpenApiOntUtils.styleURI),styleInd));
 		//Extract the schema defining the type used for the parameter.
 		if(Parameter.getSchema()!=null){
-			Individual schemaInd=parseSchemaObject(ontModel,null,Parameter.getSchema(),schemas);
+			Individual schemaInd=parseSchemaObject(ontModel,null, null, Parameter.getSchema(),schemas);
 			ontModel.add(ontModel.createStatement(parameterInd, ontModel.getProperty(OpenApiOntUtils.schemaURI),schemaInd));
 		}
 		//Extract a map containing the representations for the parameter
@@ -432,7 +432,7 @@ public class Convert2Ontology {
 		//Extract the schema defining the type used for the parameter.
 		ontModel.add(ontModel.createStatement(parameterInd, ontModel.getProperty(OpenApiOntUtils.styleURI),styleInd));
 		if(Parameter.getSchema()!=null){
-			Individual schemaInd=parseSchemaObject(ontModel,null,Parameter.getSchema(),schemas);
+			Individual schemaInd=parseSchemaObject(ontModel,null, null, Parameter.getSchema(),schemas);
 			ontModel.add(ontModel.createStatement(parameterInd, ontModel.getProperty(OpenApiOntUtils.schemaURI),schemaInd));
 		}
 		//Extract a map containing the representations for the parameter
@@ -531,7 +531,7 @@ public class Convert2Ontology {
 		}
 		if(mediaTypeObject.getSchema()!=null){
 			//Extract schema defining the content of the request, response, or parameter.
-			Individual schemaInd=parseSchemaObject(ontModel,null,mediaTypeObject.getSchema(),schemas);
+			Individual schemaInd=parseSchemaObject(ontModel,null, null, mediaTypeObject.getSchema(),schemas);
 			ontModel.add(ontModel.createStatement(mediatypeInd, ontModel.getProperty(OpenApiOntUtils.schemaURI),schemaInd));
 		}
 		return mediatypeInd;
@@ -633,9 +633,6 @@ public class Convert2Ontology {
 			method_uri="unknown";
 		}
 
-//		System.out.println("===>");
-//		System.out.println(ontModel.getIndividual("http://www.intelligence.tuc.gr/ns/open-api#GET"));
-//		System.out.println(ontModel.getIndividual(method_uri));
 		return ontModel.getIndividual(method_uri);
 
 	}
@@ -726,7 +723,7 @@ public class Convert2Ontology {
 				// extractSchemaName(#/components/schema/Pet)->{Pet}
 				String schemaName= extractSchemaName(xOnResourseExtension.toString());
 				//create that schema Object
-				schemaInd=parseSchemaObject(ontModel,schemaName,schemas.get(schemaName),schemas);
+				schemaInd=parseSchemaObject(ontModel,schemaName, null, schemas.get(schemaName),schemas);
 			}
 		}
 		//return tag  with the corresponding schema
@@ -735,7 +732,7 @@ public class Convert2Ontology {
 
 	private String extractSchemaName(String xOnResourseExtension) {
 		String [] listOfComponents = xOnResourseExtension.split("/");
-		String [] shape_name = listOfComponents[listOfComponents.length-1].split(".");
+		String [] shape_name = listOfComponents[listOfComponents.length-1].split("\\.");
 		if(shape_name.length>1)
 			return shape_name[0];
 		else
@@ -745,15 +742,17 @@ public class Convert2Ontology {
 	/*The Schema Object allows the definition of input and output data types.
 	These types can be objects, but also primitives and arrays.
 	 */
-	private Individual parseSchemaObject(OntModel ontModel, String schemaName, Schema schemaObject,
+	private Individual parseSchemaObject(OntModel ontModel, String schemaName, String composedParent, Schema schemaObject,
 										 Map<String, Schema> schemas) {
 
 		Individual shapeInd = null;
+
 		if(schemaObject.get$ref()!=null){
 			//If schema is already defined in , retrieve it from its name.
 			schemaName=extractSchemaName(schemaObject.get$ref());
 			schemaObject=schemas.get(schemaName);
 		}
+
 		shapeInd = findShapeIndividual(ontModel, schemaName+"NodeShape");
 
 
@@ -763,73 +762,27 @@ public class Convert2Ontology {
 			ComposedSchema cObj = new ComposedSchema();
 			cObj = (ComposedSchema) schemaObject;
 
-			// Create basic nodeshape because cant be property or collection with allof, anyof, oneof.
+			// Create basic nodeshape
 			// Will be used as a base for all three types.
-			String originalName = schemaName;
-			if (schemaName != null) {
-				schemaName = schemaName + "NodeShape";
-			}
-			shapeInd = ontModel.createIndividual(schemaName, ontModel.getOntClass(OpenApiOntUtils.NodeShapeClassURI));
-			property_creator.AddSchemaLabel(shapeInd, schemaName);
-
-			if (schemaObject.getDescription() != null) {
-				property_creator.AddDescription(shapeInd, schemaObject.getDescription());
-			}
-
-			Resource classUri = null;
-			OntClass newClass = ontModel.createClass(originalName);
-			classUri = ResourceFactory.createResource(newClass.getURI());
-			ontModel.add(ontModel.createStatement(shapeInd, ontModel.getProperty(OpenApiOntUtils.targetClassURI), classUri));
+			shapeInd = createNodeShape(ontModel, schemaName, null, schemaObject, schemas);
 
 			// Three types
 			if (cObj.getAllOf() != null) {
 				List <Schema> allOfs = cObj.getAllOf();
-				RDFList rdfList = ontModel.createList();
-
-				Individual listComponent = null;
-				for (Schema subject : allOfs) {
-					listComponent = parseSchemaObject(ontModel, null, subject, schemas);
-
-					// Last Function
-					if (subject.get$ref() != null){
-						createInheritance(ontModel, extractSchemaName(subject.get$ref()), originalName, schemas);
-					}
-
-					//Add to list
-					rdfList = rdfList.cons(listComponent);
-					listComponent = null;
-				}
+				RDFList rdfList = complexSchema(ontModel, schemaName, allOfs, true, schemas);
 
 				// Add list to nodeShape
 				ontModel.add(ontModel.createStatement(shapeInd, ontModel.getProperty(OpenApiOntUtils.andURI), rdfList));
 			} else if (cObj.getAnyOf() != null) {
 				List <Schema> anyOfs = cObj.getAnyOf();
-				RDFList rdfList = ontModel.createList();
-
-				Individual listComponent = null;
-				for (Schema subject : anyOfs) {
-					listComponent = parseSchemaObject(ontModel, null, subject, schemas);
-
-					//Add to list
-					rdfList = rdfList.cons(listComponent);
-					listComponent = null;
-				}
+				RDFList rdfList = complexSchema(ontModel, schemaName, anyOfs, false, schemas);
 
 				// Add list to nodeShape
 				ontModel.add(ontModel.createStatement(shapeInd, ontModel.getProperty(OpenApiOntUtils.orURI), rdfList));
 
 			} else if (cObj.getOneOf() != null) {
 				List <Schema> oneOfs = cObj.getOneOf();
-				RDFList rdfList = ontModel.createList();
-
-				Individual listComponent = null;
-				for (Schema subject : oneOfs) {
-					listComponent = parseSchemaObject(ontModel, null, subject, schemas);
-
-					//Add to list
-					rdfList = rdfList.cons(listComponent);
-					listComponent = null;
-				}
+				RDFList rdfList = complexSchema(ontModel, schemaName, oneOfs, false, schemas);
 
 				// Add list to nodeShape
 				ontModel.add(ontModel.createStatement(shapeInd, ontModel.getProperty(OpenApiOntUtils.xoneURI), rdfList));
@@ -842,7 +795,7 @@ public class Convert2Ontology {
 			//Else create a new Schema individual
 
 			if (schemaObject.getType().equals("object")) {
-				shapeInd = createNodeShape(ontModel, schemaName, schemaObject,schemas);
+				shapeInd = createNodeShape(ontModel, schemaName, composedParent, schemaObject,schemas);
 			}
 			else if (schemaObject.getType().equals("array") && schemaObject.getExtensions()==null) {
 				shapeInd =createCollectionNodeShape(ontModel, schemaName, schemaObject, schemas);
@@ -856,66 +809,173 @@ public class Convert2Ontology {
 		return shapeInd;
 	}
 
-	private void createInheritance(OntModel ontModel, String subjectName, String schemaName, Map<String, Schema> schemas){
+	private RDFList complexSchema(OntModel ontModel, String schemaName, List<Schema> components, Boolean all, Map<String, Schema> schemas){
+		RDFList rdfList = ontModel.createList();
+		Individual listComponent = null;
 
-		Schema superModel = schemas.get(subjectName);
-		Schema subModel = schemas.get(schemaName);
+		for (Schema subject : components) {
+			listComponent = parseSchemaObject(ontModel, null, schemaName, subject, schemas);
 
-		// Discriminator object exists
-		if(superModel.getDiscriminator() != null){
-
-			if (superModel.getExtensions() == null && subModel.getExtensions() == null){
-				System.out.println("Case 1 (ii)");
-				OntClass newClass = ontModel.createClass(schemaName);
-				newClass.addSuperClass(ResourceFactory.createResource(subjectName));
-			} else if (superModel.getExtensions() != null && superModel.getExtensions().get("x-refersTo").equals("none")){
-
-				if (subModel.getExtensions() != null && !subModel.getExtensions().get("x-refersTo").equals("none")) {
-					System.out.println("Case 3");
-					OntClass newClass = ontModel.createClass(subModel.getExtensions().values().toArray()[0].toString());
-					newClass.addSuperClass(ResourceFactory.createResource(subjectName));
-				} else {
-					System.out.println("Case 1 (ii)");
-					OntClass newClass = ontModel.createClass(schemaName);
-					newClass.addSuperClass(ResourceFactory.createResource(subjectName));
-				}
-			} else if(subModel.getExtensions() != null && subModel.getExtensions().get("x-refersTo").equals("none")){
-
-				if (superModel.getExtensions() != null && !superModel.getExtensions().get("x-refersTo").equals("none")) {
-					System.out.println("Case 2");
-					OntClass newClass = ontModel.createClass(schemaName);
-					newClass.addSuperClass(ResourceFactory.createResource(superModel.getExtensions().values().toArray()[0].toString()));
-				} else {
-					System.out.println("Case 1 (ii)");
-					OntClass newClass = ontModel.createClass(schemaName);
-					newClass.addSuperClass(ResourceFactory.createResource(subjectName));
-				}
-			} else if (superModel.getExtensions() != null){
-
-				if (subModel.getExtensions() != null) {
-					System.out.println("Case 4");
-					OntClass newClass = ontModel.createClass(subModel.getExtensions().values().toArray()[0].toString());
-					newClass.addSuperClass(ResourceFactory.createResource(superModel.getExtensions().values().toArray()[0].toString()));
-				} else {
-					System.out.println("Case 2");
-					OntClass newClass = ontModel.createClass(schemaName);
-					newClass.addSuperClass(ResourceFactory.createResource(superModel.getExtensions().values().toArray()[0].toString()));
-				}
-			} else if (subModel.getExtensions() != null) {
-
-				if (superModel.getExtensions() != null) {
-					System.out.println("Case 4");
-					OntClass newClass = ontModel.createClass(subModel.getExtensions().values().toArray()[0].toString());
-					newClass.addSuperClass(ResourceFactory.createResource(superModel.getExtensions().values().toArray()[0].toString()));
-				} else {
-					System.out.println("Case 3");
-					OntClass newClass = ontModel.createClass(subModel.getExtensions().values().toArray()[0].toString());
-					newClass.addSuperClass(ResourceFactory.createResource(subjectName));
-				}
+			if (subject.get$ref() != null && all){
+				createInheritance(ontModel, extractSchemaName(subject.get$ref()), schemaName, schemas);
 			}
 
+			//Add to list
+			rdfList = rdfList.cons(listComponent);
+			listComponent = null;
 		}
 
+		return rdfList;
+	}
+
+
+	private String inherit(OntModel ontModel, String subject, Map<String, Schema> schemas){
+
+		Schema subjectSchema = schemas.get(subject);
+		if (subjectSchema.getExtensions() == null){
+			return subject;
+		} else {
+			if (subjectSchema.getExtensions().get("x-refersTo") != null) {
+				// x-refesTo
+				if (subjectSchema.getExtensions().get("x-refersTo").equals("none")) {
+					return null;
+				} else {
+					// x-refersTo: none
+					return subjectSchema.getExtensions().get("x-refersTo").toString();
+				}
+			} else if (subjectSchema.getExtensions().get("x-kindOf") != null) {
+				// x-kindOf
+				return subjectSchema.getExtensions().get("x-kindOf").toString();
+
+			} else if (subjectSchema.getExtensions().get("x-mapsTo") != null) {
+				// x-mapsTo
+				String mappedSchema = extractSchemaName(subjectSchema.getExtensions().get("x-mapsTo").toString());
+				Individual mappedInd = findShapeIndividual(ontModel, mappedSchema + "NodeShape");
+				if (mappedInd != null) {
+					return mappedInd.getPropertyResourceValue(ontModel.getProperty(OpenApiOntUtils.targetClassURI)).getURI();
+				}
+			}
+		}
+
+		return null;
+	}
+
+	private void createInheritance(OntModel ontModel, String subjectName, String schemaName, Map<String, Schema> schemas){
+		Schema superModel = schemas.get(subjectName);
+		Schema subModel = schemas.get(schemaName);
+		String toSubClass = inherit(ontModel, schemaName, schemas);
+		String toSuperClass = inherit(ontModel, subjectName, schemas);
+
+		if(toSubClass != null && toSuperClass != null){
+			OntClass newSubClass = ontModel.createClass(toSubClass);
+			newSubClass.addSuperClass(ResourceFactory.createResource(toSuperClass));
+		}
+	}
+
+	private boolean semanticValidation(Schema schemaObject, Map<String, Schema> schemas) {
+
+		Boolean propertyAnnotation;
+
+		if(schemaObject.getExtensions() == null){
+			propertyAnnotation = false;
+		} else {
+			propertyAnnotation = true;
+		}
+
+		List<Boolean> subAnnotation = new ArrayList<Boolean>();
+
+		if(schemaObject.getClass().toString().endsWith("ComposedSchema")){
+			ComposedSchema cObj = new ComposedSchema();
+			cObj = (ComposedSchema) schemaObject;
+
+			if (cObj.getOneOf() != null){
+				List<Schema> oneOfs = cObj.getOneOf();
+
+				// For every schema in property
+				for(Schema subject : oneOfs){
+					// Check for annotations
+					if(subject.getExtensions() != null){
+						// If annotation exists true
+						subAnnotation.add(true);
+					} else {
+						// If annotation does not exists investigate
+						// Check if annotation is missing because of type
+						if (subject.get$ref() != null){
+							String[] parts = subject.get$ref().split("/");
+							subject = schemas.get(parts[parts.length-1]);
+							if (subject.getType().equals("object")){
+								subAnnotation.add(false);
+							} else {
+								if(subject.getExtensions() == null)
+									subAnnotation.add(false);
+								else
+									subAnnotation.add(true);
+							}
+						} else
+							subAnnotation.add(false);
+					}
+				}
+
+			} else if (cObj.getAnyOf() != null){
+				List<Schema> anyOfs = cObj.getAnyOf();
+
+				// For every schema in property
+				for(Schema subject : anyOfs){
+					// Check for annotations
+					if(subject.getExtensions() != null){
+						// If annotation exists true
+						subAnnotation.add(true);
+					} else {
+						// If annotation does not exists investigate
+						// Check if annotation is missing because of type
+						if (subject.get$ref() != null){
+							String[] parts = subject.get$ref().split("/");
+							subject = schemas.get(parts[parts.length-1]);
+							if (subject.getType().equals("object")){
+								subAnnotation.add(false);
+							} else {
+								if(subject.getExtensions() == null)
+									subAnnotation.add(false);
+								else
+									subAnnotation.add(true);
+							}
+						} else
+							subAnnotation.add(false);
+					}
+
+				}
+
+			}
+
+			//System.out.println(Arrays.toString(subAnnotation.toArray()));
+
+			// System Exits
+			// if not ALL of the subproperties contain annotations
+			// if both head property and sub properties contain annotations
+			if((subAnnotation.contains(true) && subAnnotation.contains(false)) || (propertyAnnotation == true && subAnnotation.contains(true))){
+				// If properties do not agree
+				System.out.println("System exits dew to semantic malfunction");
+				System.exit(1);
+			}
+
+			// Return true means sh:path property (=> pathInit) is going to be initialized later in composed schema
+			return subAnnotation.contains(true);
+
+		} else if (schemaObject.get$ref() != null){
+
+			// It is handled from createNodeShape in embedded ref property
+			return true;
+		}
+
+		// Not really necessary
+		return subAnnotation.contains(true);
+	}
+
+
+
+	private Schema findSchema(String refString, Map<String, Schema> schemas){
+		String[] parts = refString.split("/");
+		return schemas.get(parts[parts.length-1]);
 	}
 
 
@@ -923,8 +983,12 @@ public class Convert2Ontology {
 										   Map<String, Schema> schemas) {
 
 		String oldSchemaName = null;
+		String originalName = null;
+		Boolean pathInit = null;
+
 
 		if(schemaName!=null){
+			originalName = schemaName;
 			oldSchemaName = schemaName;
 			schemaName=schemaName+"PropertyShape";
 		}
@@ -933,6 +997,9 @@ public class Convert2Ontology {
 			oldSchemaName=ownerName+"_"+oldSchemaName;
 			schemaName=ownerName+"_"+schemaName;
 		}
+
+		// Semantic validation
+		pathInit  = semanticValidation(schemaObject, schemas);
 
 		Individual propertyShapeInd =  ontModel.createIndividual(schemaName,ontModel.getOntClass(OpenApiOntUtils.PropertyShapeClassURI));
 		property_creator.AddSchemaLabel(propertyShapeInd, schemaName);
@@ -943,17 +1010,23 @@ public class Convert2Ontology {
 			if (schemaObject.getExtensions().get("x-refersTo")!=null && !schemaObject.getExtensions().get("x-refersTo").equals("none")) {
 				//Get property uri that x-refersTo indicates.
 				propertyUri = ResourceFactory.createResource(schemaObject.getExtensions().get("x-refersTo").toString());
+				ontModel.createOntProperty(schemaObject.getExtensions().get("x-refersTo").toString());
+				ontModel.add(ontModel.createStatement(propertyShapeInd, ontModel.getProperty(OpenApiOntUtils.pathURI), propertyUri));
 			}
 			else if (schemaObject.getExtensions().get("x-kindOf")!=null) {
 				//Get property uri that x-kindOf indicates.
 				String uri = schemaObject.getExtensions().get("x-kindOf").toString();
 				//create a property with name "schemaName"
-
-				Property property = ontModel.createProperty(schemaName);
+				Property property = ontModel.createOntProperty(oldSchemaName);
 				//Set x-kindOf url as SuperProperty of our property
-				property.addProperty( RDFS.subPropertyOf, uri );
+				property.addProperty( RDFS.subPropertyOf, ontModel.createOntProperty(uri)
+				);
 				//Get uri of the new property
 				propertyUri = ResourceFactory.createResource(property.getURI());
+				// create rdf property of referred uri
+				ontModel.createOntProperty(uri);
+				// add to path
+				ontModel.add(ontModel.createStatement(propertyShapeInd, ontModel.getProperty(OpenApiOntUtils.pathURI), propertyUri));
 			}
 			else if (schemaObject.getExtensions().get("x-mapsTo")!=null) {
 				//Get property that x-mapsTo indicates.
@@ -966,62 +1039,144 @@ public class Convert2Ontology {
 				if (mappedShapeInd == null) {
 					//Get schema object from componentSchemas with name "mappedSchema"
 					Schema mappedSchemaEntry = schemas.get(mappedSchema);
-					mappedShapeInd = createNodeShape(ontModel, mappedSchema, mappedSchemaEntry, schemas);
+					mappedShapeInd = parseSchemaObject(ontModel, mappedSchema, null, mappedSchemaEntry, schemas);
 				}
 				//After extraction of NodeShape name, extract also the mapped property name
 				String mappedProperty = extractPropertyName(mappedSchemaProperty);
 				if (mappedProperty == null) {
 					//If there is no mapped property name, copy the path value of mappedShapeInd
 					Resource propertyValue=mappedShapeInd.getPropertyResourceValue(ontModel.getProperty(OpenApiOntUtils.pathURI));
+					if(propertyValue == null){
+						// If mappedShapeInd is of a NodeShape it wont have path but targetClass
+						propertyValue=mappedShapeInd.getPropertyResourceValue(ontModel.getProperty(OpenApiOntUtils.targetClassURI));
+					}
 					ontModel.add(ontModel.createStatement(propertyShapeInd, ontModel.getProperty(OpenApiOntUtils.pathURI),propertyValue));
 				}
 				else {
 					//Else locate x-mapsTo property in ontology
-					Individual mappedPropertyShape = findShapeIndividual(ontModel,mappedShapeInd+"PropertyShape");
+					Individual mappedPropertyShape = findShapeIndividual(ontModel,mappedSchema+"_"+mappedProperty+"PropertyShape");
 					//copy the path value of mappedPropertyShape
-					ontModel.add(ontModel.createStatement(propertyShapeInd, ontModel.getProperty(OpenApiOntUtils.pathURI),mappedPropertyShape));
+					Resource propertyValue=mappedPropertyShape.getPropertyResourceValue(ontModel.getProperty(OpenApiOntUtils.pathURI));
+					ontModel.add(ontModel.createStatement(propertyShapeInd, ontModel.getProperty(OpenApiOntUtils.pathURI),propertyValue));
 				}
 			}
-		} else if (oldSchemaName != null){
-//			System.out.println(oldSchemaName);
-			Resource propertyValue= ResourceFactory.createProperty(oldSchemaName);
+		} else if (oldSchemaName != null && !pathInit){
+			Resource propertyValue = ResourceFactory.createProperty(oldSchemaName);
+			ontModel.createOntProperty(oldSchemaName);
 			ontModel.add(ontModel.createStatement(propertyShapeInd, ontModel.getProperty(OpenApiOntUtils.pathURI), propertyValue));
 		}
 
-		if (schemaObject.getType().equals("array")) {
-			ArraySchema arraySchema= (ArraySchema) schemaObject;
-			//Extract items of array
-			Schema itemsObject = arraySchema.getItems();
-			Individual shapeInd = null;
-			if(itemsObject.get$ref()!=null){
-				schemaName=extractSchemaName(itemsObject.get$ref());
-				itemsObject=schemas.get(schemaName);
-			}
-			shapeInd = findShapeIndividual(ontModel, schemaName+"NodeShape");
-			// Prediction pe	itemsObject.getType() != null
-			if(shapeInd==null && itemsObject.getType() != null){
-				//create a NodeShape individual for each item of the array
-				if (itemsObject.getType().equals("object")) {
-					Individual itemsNodeShape = createNodeShape(ontModel, schemaName, itemsObject, schemas);
-					ontModel.add(ontModel.createStatement(propertyShapeInd, ontModel.getProperty(OpenApiOntUtils.nodeURI),itemsNodeShape));
+
+		// Embedded composedSchema in properties
+		if (schemaObject.getType() == null ){
+			if(schemaObject.getClass().toString().endsWith("ComposedSchema")) {
+
+				ComposedSchema cObj = new ComposedSchema();
+				cObj = (ComposedSchema) schemaObject;
+
+				if (cObj.getOneOf() != null) {
+					List<Schema> oneOfs = cObj.getOneOf();
+					RDFList rdfList = ontModel.createList();
+
+					Individual listComponent = null;
+					for (Schema subject : oneOfs) {
+						listComponent = parseSchemaObject(ontModel, null, null, subject, schemas);
+
+
+						// If nodeshape needs calibrate
+						if (subject.get$ref() != null) {
+							Schema tmpSchema = findSchema(subject.get$ref(), schemas);
+							if (tmpSchema.getType() != null && tmpSchema.getType().equals("object")){
+								Individual refInd = ontModel.createIndividual(null, ontModel.getOntClass(OpenApiOntUtils.PropertyShapeClassURI));
+								ontModel.add(ontModel.createStatement(refInd, ontModel.getProperty(OpenApiOntUtils.nodeURI), listComponent));
+								listComponent = refInd;
+							}
+						}
+
+						//Add to list
+						rdfList = rdfList.cons(listComponent);
+						listComponent = null;
+					}
+
+					// Add list to nodeShape
+					ontModel.add(ontModel.createStatement(propertyShapeInd, ontModel.getProperty(OpenApiOntUtils.xoneURI), rdfList));
+
+				} else if (cObj.getAnyOf() != null) {
+					List<Schema> anyOfs = cObj.getAnyOf();
+					RDFList rdfList = ontModel.createList();
+
+					Individual listComponent = null;
+					for (Schema subject : anyOfs) {
+						listComponent = parseSchemaObject(ontModel, null, null, subject, schemas);
+
+						if (subject.get$ref() != null) {
+							Schema tmpSchema = findSchema(subject.get$ref(), schemas);
+							if (tmpSchema.getType() != null && tmpSchema.getType().equals("object")){
+								Individual refInd = ontModel.createIndividual(null, ontModel.getOntClass(OpenApiOntUtils.PropertyShapeClassURI));
+								ontModel.add(ontModel.createStatement(refInd, ontModel.getProperty(OpenApiOntUtils.nodeURI), listComponent));
+								listComponent = refInd;
+							}
+						}
+
+						//Add to list
+						rdfList = rdfList.cons(listComponent);
+						listComponent = null;
+					}
+
+					// Add list to nodeShape
+					ontModel.add(ontModel.createStatement(propertyShapeInd, ontModel.getProperty(OpenApiOntUtils.orURI), rdfList));
+
 				}
-				else {
-					//if items are not object type, keep only the datatype of items
-					Resource resource =getDatatype(ontModel, itemsObject.getType(), itemsObject.getFormat());
-					ontModel.add(ontModel.createStatement(propertyShapeInd, ontModel.getProperty(OpenApiOntUtils.datatypeURI),resource));
-				}
+			} else if(schemaObject.getNot() != null){
+				Schema notSchema = schemaObject.getNot();
+
+				// not property cannot have
+				Map<String, String> not = new HashMap<>();
+
+				not.put("x-refersTo", null);
+				not.put("x-kindOf", null);
+				not.put("x-mapsTo", null);
+
+				notSchema.setExtensions(not);
+
+				Individual component = parseSchemaObject(ontModel, null, null, notSchema, schemas);
+				ontModel.add(ontModel.createStatement(propertyShapeInd, ontModel.getProperty(OpenApiOntUtils.notURI), component));
 			}
-			property_creator.AddMinItems(propertyShapeInd, String.valueOf(arraySchema.getMinItems()));
-			property_creator.AddMaxItems(propertyShapeInd, String.valueOf(arraySchema.getMaxItems()));
-		}
-		else if (schemaObject.getType().equals("object")) {
-			Individual nodeShape = createNodeShape(ontModel, schemaName, schemaObject, schemas);
-			ontModel.add(ontModel.createStatement(propertyShapeInd, ontModel.getProperty(OpenApiOntUtils.nodeURI),nodeShape));
-		}
-		else {
-			//Keep only the datatype
-			Resource resource =getDatatype(ontModel, schemaObject.getType(), schemaObject.getFormat());
-			ontModel.add(ontModel.createStatement(propertyShapeInd, ontModel.getProperty(OpenApiOntUtils.datatypeURI),resource));
+		} else {
+			if (schemaObject.getType().equals("array")) {
+				ArraySchema arraySchema = (ArraySchema) schemaObject;
+				//Extract items of array
+				Schema itemsObject = arraySchema.getItems();
+				Individual shapeInd = null;
+				if (itemsObject.get$ref() != null) {
+					schemaName = extractSchemaName(itemsObject.get$ref());
+					itemsObject = schemas.get(schemaName);
+				}
+				shapeInd = findShapeIndividual(ontModel, schemaName + "NodeShape");
+				// Prediction pe	itemsObject.getType() != null
+				if (shapeInd == null && itemsObject.getType() != null) {
+					//create a NodeShape individual for each item of the array
+					if (itemsObject.getType().equals("object")) {
+						Individual itemsNodeShape = createNodeShape(ontModel, schemaName, null, itemsObject, schemas);
+						ontModel.add(ontModel.createStatement(propertyShapeInd, ontModel.getProperty(OpenApiOntUtils.nodeURI), itemsNodeShape));
+					} else {
+						//if items are not object type, keep only the datatype of items
+						Resource resource = getDatatype(ontModel, itemsObject.getType(), itemsObject.getFormat());
+						if (resource != null) {
+							ontModel.add(ontModel.createStatement(propertyShapeInd, ontModel.getProperty(OpenApiOntUtils.datatypeURI), resource));
+						}
+					}
+				}
+				property_creator.AddMinItems(propertyShapeInd, String.valueOf(arraySchema.getMinItems()));
+				property_creator.AddMaxItems(propertyShapeInd, String.valueOf(arraySchema.getMaxItems()));
+			} else if (schemaObject.getType().equals("object")) {
+				Individual nodeShape = createNodeShape(ontModel, schemaName, null, schemaObject, schemas);
+				ontModel.add(ontModel.createStatement(propertyShapeInd, ontModel.getProperty(OpenApiOntUtils.nodeURI), nodeShape));
+			} else {
+				//Keep only the datatype
+				Resource resource = getDatatype(ontModel, schemaObject.getType(), schemaObject.getFormat());
+				ontModel.add(ontModel.createStatement(propertyShapeInd, ontModel.getProperty(OpenApiOntUtils.datatypeURI), resource));
+			}
 		}
 		property_creator.AddDescription(propertyShapeInd, schemaObject.getDescription());
 		property_creator.AddtTitle(propertyShapeInd, schemaObject.getTitle());
@@ -1071,8 +1226,11 @@ public class Convert2Ontology {
 
 	private String extractPropertyName(String mappedSchemaProperty) {
 		String [] listOfComponents = mappedSchemaProperty.split("/");
-		String [] shape_name = listOfComponents[listOfComponents.length-1].split(".");
-		return shape_name[1];
+		String [] shape_name = listOfComponents[listOfComponents.length-1].split("\\.");
+		if (shape_name.length > 1)
+			return shape_name[1];
+		else
+			return null;
 	}
 
 	private Individual createCollectionNodeShape(OntModel ontModel, String schemaName, Schema schemaObject,
@@ -1101,13 +1259,15 @@ public class Convert2Ontology {
 
 	//It's called when schema is an object
 
-	private Individual createNodeShape(OntModel ontModel, String schemaName, Schema schemaObject,
+	private Individual createNodeShape(OntModel ontModel, String schemaName, String composedParent, Schema schemaObject,
 									   Map<String, Schema> schemas) {
+
 		String oldSchemaName = null;
 		if(schemaName!=null){
 			oldSchemaName = schemaName;
 			schemaName=schemaName+"NodeShape";
 		}
+
 		Individual nodeShapeInd =  ontModel.createIndividual(schemaName,ontModel.getOntClass(OpenApiOntUtils.NodeShapeClassURI));
 		property_creator.AddSchemaLabel(nodeShapeInd, schemaName);
 		//handle semantics x-refersTo, x-kindOf, x-mapsTo
@@ -1116,13 +1276,16 @@ public class Convert2Ontology {
 		if(schemaObject.getExtensions()!=null) {
 			if (schemaObject.getExtensions().get("x-refersTo")!=null && !schemaObject.getExtensions().get("x-refersTo").equals("none")) {
 				//Extract x-refersTo class uri
+				OntClass newClass = ontModel.createClass(schemaObject.getExtensions().get("x-refersTo").toString());
 				classUri = ResourceFactory.createResource(schemaObject.getExtensions().get("x-refersTo").toString());
 			}
 			else if (schemaObject.getExtensions().get("x-kindOf")!=null) {
 				//Extract x-kindof class uri
 				String uri = schemaObject.getExtensions().get("x-kindOf").toString();
+				// create class with the given uri
+				ontModel.createClass(uri);
 				//create class with name "schemaName"
-//				OntClass newClass = ontModel.createClass(schemaName+"Class");
+				//OntClass newClass = ontModel.createClass(schemaName+"Class");
 				OntClass newClass = ontModel.createClass(oldSchemaName);
 				//Set x-kindOf class as superClass
 				newClass.addSuperClass(ResourceFactory.createResource(uri));
@@ -1131,21 +1294,23 @@ public class Convert2Ontology {
 			}
 			else if (schemaObject.getExtensions().get("x-mapsTo")!=null) {
 				//Extract x-mapsTo class uri
-				String mappedSchemaName = schemaObject.getExtensions().get("x-mapsTo").toString();
+				String mappedSchemaString = schemaObject.getExtensions().get("x-mapsTo").toString();
+				// Extract schema name
+				String mappedSchemaName = extractSchemaName(mappedSchemaString);
 				//Get component schema with name "mappedSchemaName"
 				Schema mappedSchemaEntry = schemas.get(mappedSchemaName);
 				//Check if that schema is already defined in ontology
-				Individual mappedShapeInd = findShapeIndividual(ontModel, schemaName);
+				Individual mappedShapeInd = findShapeIndividual(ontModel, mappedSchemaName + "NodeShape");
 				if (mappedShapeInd == null) {
 					//Else create individual for that schema object
-					mappedShapeInd = createNodeShape(ontModel, mappedSchemaName, mappedSchemaEntry, schemas);
+					mappedShapeInd = createNodeShape(ontModel, mappedSchemaName, null, mappedSchemaEntry, schemas);
 				}
 				//Extract class uri that targetClass points to.
 				classUri = mappedShapeInd.getPropertyResourceValue(ontModel.getProperty(OpenApiOntUtils.targetClassURI));
 			}
 			else if (schemaObject.getExtensions().get("x-collectionTo")!=null) {
 				//create a class with name "schemaName"
-//				OntClass newClass = ontModel.createClass(schemaName+"Class");
+				//OntClass newClass = ontModel.createClass(schemaName+"Class");
 				OntClass newClass = ontModel.createClass(oldSchemaName);
 				//Set Collection as superClass of our class
 				newClass.addSuperClass(ontModel.getOntClass(OpenApiOntUtils.CollectionClassURI));
@@ -1157,6 +1322,7 @@ public class Convert2Ontology {
 
 			//In case of x-refersTo: none nothing will happen
 			if(classUri!=null ){
+				ontModel.createClass(classUri.getURI());
 				ontModel.add(ontModel.createStatement(nodeShapeInd, ontModel.getProperty(OpenApiOntUtils.targetClassURI), classUri));
 			}
 		} else if (oldSchemaName != null){
@@ -1169,15 +1335,28 @@ public class Convert2Ontology {
 		//Extract all properties of nodeShape
 		if(propertySchemas!=null){
 			for ( Map.Entry<String,Schema>  propertyEntry : propertySchemas.entrySet()) {
-				Individual propertyShapeInd = createPropertyShape(ontModel, oldSchemaName, propertyEntry.getKey(), propertyEntry.getValue(), schemas);
+				Individual propertyShapeInd = null;
+				if(propertyEntry.getValue().get$ref() != null){
+					// Embedded ref in property
+					propertyShapeInd = parseSchemaObject(ontModel, null, null, propertyEntry.getValue(), schemas);
+				}
+				else if (oldSchemaName == null && composedParent != null) {
+					propertyShapeInd = createPropertyShape(ontModel, composedParent, propertyEntry.getKey(), propertyEntry.getValue(), schemas);
+				} else if (oldSchemaName != null) {
+					propertyShapeInd = createPropertyShape(ontModel, oldSchemaName, propertyEntry.getKey(), propertyEntry.getValue(), schemas);
+				} else {
+					propertyShapeInd = createPropertyShape(ontModel, null, propertyEntry.getKey(), propertyEntry.getValue(), schemas);
+				}
 				//Save property name
 				property_creator.AddName(propertyShapeInd, propertyEntry.getKey());
 				//If collection member is same with propertyName set property path
 				//of the property shape to "member"
 				if (propertyEntry.getKey().equals(collectionMember)) {
-					ontModel.add(ontModel.createStatement(propertyShapeInd, ontModel.getProperty(OpenApiOntUtils.pathURI),ontModel.getProperty(OpenApiOntUtils.memberURI)));
+					ontModel.add(ontModel.createStatement(propertyShapeInd, ontModel.getProperty(OpenApiOntUtils.pathURI), ontModel.getProperty(OpenApiOntUtils.memberURI)));
 				}
-				ontModel.add(ontModel.createStatement(nodeShapeInd, ontModel.getProperty(OpenApiOntUtils.propertyURI),propertyShapeInd));
+				if(propertyShapeInd != null){
+					ontModel.add(ontModel.createStatement(nodeShapeInd, ontModel.getProperty(OpenApiOntUtils.propertyURI), propertyShapeInd));
+				}
 			}
 		}
 		//Extract a short description

@@ -1,0 +1,128 @@
+.middle {
+  height: 80%;
+  display: flex;
+  flex-direction: row;
+  justify-content: space-between;
+}
+
+.side {
+  width: 165px;
+  height: 265px;
+  border: 1px solid rgb(39, 61, 134);
+  border-radius: 25px;
+  border-top-right-radius: 0px;
+}
+
+.next_to {
+  width: 90%;
+  height: 260px;
+  border: 2px solid white;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+}
+
+.next_to_top {
+  width: 100%;
+  height: 10%;
+  background: rgb(224, 65, 65);
+}
+
+.next_to_top h3 {
+  margin-top: 1px;
+  margin-left: 2px;
+  color: white;
+}
+
+.next_to_bottom {
+  width: 98%;
+  height: 90%;
+  border: 1.5px solid brown;
+  margin-top: 25px;
+  padding-bottom: 36px;
+}
+
+.next_to_bottom h4 {
+  margin-top: -10px;
+  margin-left: 8px;
+  background: white;
+  width: 202px;
+}
+
+.side h2 {
+  color: rgb(224, 65, 65);
+  text-align: center;
+  padding-bottom: 10px;
+  /* margin-bottom: 30px; */
+  border-bottom: 1px solid rgb(39, 61, 134);
+}
+
+.side ul {
+  list-style: square;
+}
+
+.side ul li {
+  height: 25px;
+}
+
+li:hover a {
+  color: rgb(224, 65, 65);
+  text-decoration: none;
+}
+
+.up {
+  margin-left: 20px;
+  background: rgb(221, 220, 220);
+  height: 140px;
+  width: 500px;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-around;
+}
+
+.choose {
+  margin-bottom: 35px;
+  margin-left: 25px;
+}
+
+.doIt {
+  margin-left: 25px;
+}
+
+input[type="file"] {
+  display: none;
+}
+
+input[type="submit"] {
+  display: none;
+}
+
+input#file + label {
+  padding: 8px;
+  border: 1px solid rgba(39, 61, 134, 0.4);
+  background: rgba(39, 61, 164, 0.3);
+  border-radius: 2px;
+  color: white;
+}
+
+input#file + label:hover {
+  cursor: pointer;
+  background: rgba(39, 61, 164, 0.8);
+}
+
+input#sub + label {
+  padding: 8px;
+  background: rgba(39, 61, 164, 0.3);
+  border: 1px solid rgba(39, 61, 134, 0.4);
+  border-radius: 2px;
+  color: white;
+}
+
+input#sub + label:hover {
+  cursor: pointer;
+  background: rgba(39, 61, 164, 0.8);
+}
+
+#file-name {
+  margin-left: 10px;
+}

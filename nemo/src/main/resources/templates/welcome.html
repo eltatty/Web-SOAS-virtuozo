@@ -1,43 +1,105 @@
 <!DOCTYPE html>
 <html xmlns:th="http://www.thymeleaf.org">
+<html lang="en">
 <head>
     <meta charset="UTF-8">
-    </meta>
-    <link rel="stylesheet" href="css/index.css">
-<!--    <link th:href="@{css/index.css}" href="public/css/index.css"-->
-<!--          rel="stylesheet" type="text/css" media="screen"/>-->
-    <link rel="stylesheet" href="css/content.css">
-    <title>SemanticOpenApi</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="css/header.css">
+    <link rel="stylesheet" href="css/body.css">
+    <title>Intelligent Systems Laboratory</title>
 </head>
+<body text="#326690" bgcolor="#ffffff" link="#326690" alink="#326690" vlink="#326690">
 
-<body>
-<div class="container full-height-grow">
-    <header class="main-header">
-        <nav class="main-nav">
-            <ul>
-                <li><a href="./">Home</a></li>
-                <li><a href="query">Query</a></li>
-                <li><a href="ontologies">Ontologies</a></li>
-                <li><a href="./">Paper</a></li>
-                <li><a href="http://www.intelligence.tuc.gr/">Lab</a></li>
-            </ul>
-        </nav>
-    </header>
-    <div class="content">
-        <h1 class="title">OpenAPI Service Uploading</h1>
-        <span class="subtittle">Convert to Ontology</span>
-        <br>
-        <form action="upload" method="post" enctype="multipart/form-data">
-            <div><input class="file" type="file" name="files" multiple></div>
-            <input class="upload" type="submit" value="Upload"></input>
-        </form>
-    </div>
-</div>
-<!-- <div style="flex-grow: 1; background-color: red;"></div> -->
-<footer class="main-footer">
-    <!-- <img class="logo-img" src="images/tt.png" alt=""> -->
-    <!-- <img class="logo-img" src="images/tt.png" alt=""> -->
-</footer>
+<table border="0" width="100%" cellpadding="3" cellspacing="0">
+    <tr><td>
+        <table background="images/header_background.gif" cellpadding=0 cellspacing=0 border=0 width="100%">
+            <tr valign=top height=35>
+                <td class="caption" align=left valign=bottom nowrap>
+                    <b>
+                        &nbsp;S<small>EMANTIC</small> O<small>PEN</small> A<small>PI</small>&nbsp;
+                    </b>
+                </td>
+                <td>&nbsp;</td>
+                <td class="caption2" align=right valign=bottom nowrap>
+                    <b>
+                        <big>D</big>epartment of <big>E</big>lectrical & <big>C</big>omputer <big>E</big>ngineering&nbsp;
+                    </b>
+                </td>
+            </tr>
+            <tr valign=top height=65>
+                <td align=left valign="bottom">
+                    <a href="http://www.intelligence.tuc.gr/index.php"> <img src=images/intelligence.gif alt="Intelligent Systems Laboratory" border=0 width="280" height="60"></a>
+                </td>
+                <td>&nbsp;</td>
+                <td class="ntext" align=right valign=top nowrap>
+                    <b>
+                        &nbsp;<big>T</big>ECHNICAL <big>U</big>NIVERSITY OF <big>C</big>RETE&nbsp;(TUC)&nbsp;
+                    </b>
+                </td>
+            </tr>
+        </table>
+    </td></tr>
+    <tr><td>
+</table>
+        <div class="middle">
+            <div class="side">
+                <h2>Semantic OpenAPI</h2>
+                <ul>
+                    <li><a href="./"><h3>Home</h3></a></li>
+                    <li><a href="ontologies"><h3>Ontologies</h3></a></li>
+                    <li><a href="query"><h3>Queries</h3></a></li>
+                    <li><a href="#"><h3>Paper</h3></a></li>
+                </ul>
+            </div>
+            <!-------------------- Different ----------------------->
+            <div class="next_to">
+                <div class="next_to_top">
+                    <h3>Semantic OpenAPI System</h3>
+                </div>
+                <div class="next_to_bottom">
+                    <h4>Upload OpenAPI description</h4>
+                    <div class="up">
+                        <form action="upload" method="post" enctype="multipart/form-data">
+                            <div class="choose">
+                                <input type="file" id="file" name="files" multiple>
+                                <label for="file">
+                                    Choose a description
+                                </label>
+                                <span id="file-name">No file chosen...</span>
+                            </div>
+                            <div class="doIt">
+                                <input type="submit" id="sub" value="Upload"></input>
+                                <label for="sub">
+                                    Upload
+                                </label>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+                <div class="daddyFooter">
+                  <div class="footer">
+                      <p align="center">OpenaAPI descriptions to Ontology <br>
+                        <a href="./">The System</a> | <a href="ontologies">Ontologies</a> | <a href="query">Queries</a> | <a href="#">Paper</a> | <a href="#">Diploma Thesis Bouraimis Fotios</a><br>
+                        &copy;2020<a href='http://www.intelligence.tuc.gr/'>   Intelligent Systems Laboratory</a>, TUC
+                      </p>
+                  </div>
+            </div>
+        </div>
+        <!-- --------------------------------------------------->
+        <!-- <div class="daddyFooter">
+            <div class="footer">
+                <p align="center">OpenaAPI descriptions to Ontology <br>
+                    <a href="./">The System</a> | <a href="ontologies">Ontologies</a> | <a href="#">Queries</a> | <a href="#">Paper</a> | <a href="#">Diploma Thesis Bouraimis Fotios</a><br>
+                    &copy;2020<a href='http://www.intelligence.tuc.gr/'>   Intelligent Systems Laboratory</a>, TUC
+                </p> -->
+        </div>
+<script>
+  let inputFile = document.getElementById('file');
+  let fileNameField = document.getElementById('file-name');
+  inputFile.addEventListener('change', function(event){
+    let uploadFileName = event.target.files[0].name;
+    fileNameField.textContent = uploadFileName;
+  })
+</script>
 </body>
-
 </html>
