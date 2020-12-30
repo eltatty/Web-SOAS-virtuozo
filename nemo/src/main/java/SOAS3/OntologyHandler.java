@@ -95,7 +95,8 @@ public class OntologyHandler {
 		Date date = new Date();
 		//SimpleDateFormat formatter = new SimpleDateFormat("dd-MM-yyyy HH:mm:ss");
 		SimpleDateFormat formatter = new SimpleDateFormat("dd-MM-yyyy_HH-mm-ss");
-		String newProduct = "product_" + productName +"_" + formatter.format(date)+ ".xml";
+//		String newProduct = "product_" + productName +"_" + formatter.format(date)+ ".xml";
+		String newProduct = productName +"_" + formatter.format(date)+ ".xml";
 		String product = folder.getAbsolutePath() + "/" + newProduct;
 		try{
 			OutputStream fileOut = new FileOutputStream(product);
