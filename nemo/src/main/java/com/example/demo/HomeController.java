@@ -11,6 +11,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.multipart.MultipartFile;
+import org.springframework.web.servlet.view.RedirectView;
 
 import javax.servlet.http.HttpServletResponse;
 import java.io.*;
@@ -79,7 +80,8 @@ public class HomeController {
 
         model.addAttribute("products", product_files);
         model.addAttribute("msg", "Successfully uploaded files " + fileNames.toString());
-        return "uploadstatusview";
+        //return "uploadstatusview";
+        return "redirect:/ontologies";
     }
 
     @RequestMapping("/ontologies")
