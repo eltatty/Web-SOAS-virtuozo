@@ -1,6 +1,7 @@
 package SOAS3;
 
 import io.swagger.v3.oas.models.OpenAPI;
+import org.apache.commons.io.FilenameUtils;
 import org.apache.jena.ontology.OntModel;
 import org.apache.jena.ontology.OntModelSpec;
 import org.apache.jena.rdf.model.Model;
@@ -62,8 +63,12 @@ public class SoasMapper {
 			if (file.isFile()) {
 				openapi=openapiHandler.ReadFile(file.getAbsolutePath());
 				System.out.println(file.getName());
+				// Add prefix
+				String NS = "https://www.example.com/service/" + FilenameUtils.removeExtension(file.getName()) + "#";
+				ontModel.setNsPrefix("myOnt", NS);
 				//Convert OpenApi To Ontology
-				new Convert2Ontology(openapi,ontModel);
+				new Convert2Ontology(openapi,ontModel, NS);
+//				this.ontHandler.PrintOntologyToFile(FilenameUtils.removeExtension(file.getName()));
 			}
 		}
 	}
@@ -77,7 +82,7 @@ public class SoasMapper {
 
 	public String PrintOntologyToFile(String productName) {
 		return this.ontHandler.PrintOntologyToFile(productName);
-    }
+	}
 
 	public void Query(String query,String[] columnsName) {
 		List<String> answer =ontHandler.QueryCreator(query,columnsName);

@@ -41,10 +41,12 @@ public class Convert2Ontology {
 	private OpenApiDataPropertyCreator property_creator;
 	private RDFNode securityReqInd;
 	private OpenAPI openApi4header;
+	private String NS;
 
-	public Convert2Ontology(OpenAPI openapi, OntModel ontModel) {
+	public Convert2Ontology(OpenAPI openapi, OntModel ontModel, String NS) {
 		property_creator=new OpenApiDataPropertyCreator(ontModel);
 		openApi4header = openapi;
+		this.NS = NS;
 		parseDocumentObject(ontModel, openapi);
 	}
 
@@ -839,7 +841,7 @@ public class Convert2Ontology {
 
 		Schema subjectSchema = schemas.get(subject);
 		if (subjectSchema.getExtensions() == null){
-			return subject;
+			return  NS + subject;
 		} else {
 			if (subjectSchema.getExtensions().get("x-refersTo") != null) {
 				// x-refesTo
@@ -1023,7 +1025,7 @@ public class Convert2Ontology {
 				//Get property uri that x-kindOf indicates.
 				String uri = schemaObject.getExtensions().get("x-kindOf").toString();
 				//create a property with name "schemaName"
-				Property property = ontModel.createOntProperty(oldSchemaName);
+				Property property = ontModel.createOntProperty(NS + oldSchemaName);
 				//Set x-kindOf url as SuperProperty of our property
 				property.addProperty( RDFS.subPropertyOf, ontModel.createOntProperty(uri)
 				);
@@ -1067,8 +1069,8 @@ public class Convert2Ontology {
 				}
 			}
 		} else if (oldSchemaName != null && !pathInit){
-			Resource propertyValue = ResourceFactory.createProperty(oldSchemaName);
-			ontModel.createOntProperty(oldSchemaName);
+			Resource propertyValue = ResourceFactory.createProperty( NS + oldSchemaName);
+			ontModel.createOntProperty(NS + oldSchemaName);
 			ontModel.add(ontModel.createStatement(propertyShapeInd, ontModel.getProperty(OpenApiOntUtils.pathURI), propertyValue));
 		}
 
@@ -1250,7 +1252,7 @@ public class Convert2Ontology {
 		property_creator.AddSchemaLabel(nodeShapeInd, schemaName);
 		//create a new class with name "schemaName"
 //		OntClass newClass = ontModel.createClass(schemaName+"Class");
-		OntClass newClass = ontModel.createClass(oldSchemaName);
+		OntClass newClass = ontModel.createClass(NS + oldSchemaName);
 		//Set collection as superClass
 		newClass.addSuperClass(ontModel.getOntClass(OpenApiOntUtils.CollectionClassURI));
 		Resource classURI= ResourceFactory.createResource(newClass.getURI());
@@ -1259,6 +1261,9 @@ public class Convert2Ontology {
 		//create a property shape individual for the schemaObject
 		Individual memberInd = createPropertyShape(ontModel, null, null, schemaObject, schemas);
 		//Make this property shape a member of collection
+		//Test
+		ontModel.add(ontModel.createStatement(nodeShapeInd, ontModel.getProperty(OpenApiOntUtils.propertyURI), memberInd));
+		///
 		ontModel.add(ontModel.createStatement(memberInd, ontModel.getProperty(OpenApiOntUtils.pathURI),ontModel.getProperty(OpenApiOntUtils.memberURI)));
 		return nodeShapeInd;
 	}
@@ -1292,7 +1297,7 @@ public class Convert2Ontology {
 				ontModel.createClass(uri);
 				//create class with name "schemaName"
 				//OntClass newClass = ontModel.createClass(schemaName+"Class");
-				OntClass newClass = ontModel.createClass(oldSchemaName);
+				OntClass newClass = ontModel.createClass( NS + oldSchemaName);
 				//Set x-kindOf class as superClass
 				newClass.addSuperClass(ResourceFactory.createResource(uri));
 				//get uri of our new class
@@ -1317,7 +1322,7 @@ public class Convert2Ontology {
 			else if (schemaObject.getExtensions().get("x-collectionTo")!=null) {
 				//create a class with name "schemaName"
 				//OntClass newClass = ontModel.createClass(schemaName+"Class");
-				OntClass newClass = ontModel.createClass(oldSchemaName);
+				OntClass newClass = ontModel.createClass( NS + oldSchemaName);
 				//Set Collection as superClass of our class
 				newClass.addSuperClass(ontModel.getOntClass(OpenApiOntUtils.CollectionClassURI));
 				//Extract the object-member of collection
@@ -1333,7 +1338,7 @@ public class Convert2Ontology {
 			}
 		} else if (oldSchemaName != null){
 			// Create targetClass if SOAS annotations does not exist.
-			OntClass newClass = ontModel.createClass(oldSchemaName);
+			OntClass newClass = ontModel.createClass(NS + oldSchemaName);
 			classUri = ResourceFactory.createResource(newClass.getURI());
 			ontModel.add(ontModel.createStatement(nodeShapeInd, ontModel.getProperty(OpenApiOntUtils.targetClassURI), classUri));
 		}

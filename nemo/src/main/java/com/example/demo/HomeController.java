@@ -72,6 +72,7 @@ public class HomeController {
         File[] product_files = folder.listFiles();
 
 
+
         // Curl Test
         //curl --digest --user dba:dba --verbose --url "http://localhost:8890/sparql-graph-crud-auth?graph-uri=http://localhost:8890/conv" -T books.ttl
         String[] command = { "curl", "--digest", "--user", "dba:dba", "--verbose", "--url", "http://virtuoso_box:8890/sparql-graph-crud-auth?graph-uri=http://example/"+current, "-T", "Products/"+newProduct };
@@ -117,7 +118,8 @@ public class HomeController {
     @RequestMapping("/sparql")
     public String query(Model model, @RequestParam("message") String message){
         String result = null;
-        String[] command = {"curl", "-F", "query=\""+message+"\"", "http://virtuoso_box:8890/sparql"};
+        String messageChanged = message.replaceAll("\"", "\\\\\"");
+        String[] command = {"curl", "-F", "query=\""+messageChanged+"\"", "http://virtuoso_box:8890/sparql"};
         result = curlItLikeBeckam(command);
         model.addAttribute("answer", result);
         model.addAttribute("graphs", graphs);
@@ -163,6 +165,7 @@ public class HomeController {
         }catch (IOException e) {
             e.printStackTrace();
         }
+
         return result;
     }
 

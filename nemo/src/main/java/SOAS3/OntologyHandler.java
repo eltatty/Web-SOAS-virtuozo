@@ -89,18 +89,15 @@ public class OntologyHandler {
 
 	/* Print Ontology to file */
 	public String PrintOntologyToFile(String productName){
-//		File folder = new File( "nemo/Products");
 		File folder = new File( "Products");
-		String base = "https://www.example.com/service/#" + productName;
 		Date date = new Date();
 		//SimpleDateFormat formatter = new SimpleDateFormat("dd-MM-yyyy HH:mm:ss");
 		SimpleDateFormat formatter = new SimpleDateFormat("dd-MM-yyyy_HH-mm-ss");
-//		String newProduct = "product_" + productName +"_" + formatter.format(date)+ ".xml";
-		String newProduct = productName +"_" + formatter.format(date)+ ".xml";
+		String newProduct = productName +"_" + formatter.format(date)+ ".ttl";
 		String product = folder.getAbsolutePath() + "/" + newProduct;
 		try{
 			OutputStream fileOut = new FileOutputStream(product);
-			ontModel.write(fileOut, "RDF/XML", base);
+			ontModel.write(fileOut, "TURTLE");
 		}catch (Exception e) {
 			e.getStackTrace();
 		}
