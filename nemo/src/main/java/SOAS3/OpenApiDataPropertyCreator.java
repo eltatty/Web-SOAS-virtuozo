@@ -412,7 +412,7 @@ public class OpenApiDataPropertyCreator
 	}
 	public void AddPattern(Individual object, String val) {
 		// TODO Auto-generated method stub
-		if(object==null || val==null)
+		if(object==null || val.equals("null"))
 		{
 			return ;
 		}
