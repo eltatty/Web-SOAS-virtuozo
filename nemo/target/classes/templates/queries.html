@@ -68,7 +68,7 @@
         <div class="ask">
           <form action="sparql">
             <div>
-              <textarea name="message" rows="13" cols="65" placeholder="Ex. SELECT * FROM <http://example#myontology> WHERE { ?s ?p ?o }"></textarea>
+              <textarea name="message" rows="13" cols="65" th:text="${ask}" placeholder="Ex. SELECT * FROM <http://example#myontology> WHERE { ?s ?p ?o }"></textarea>
             </div>
             <div>
               <input id="sub" type="submit">

@@ -121,6 +121,7 @@ public class HomeController {
         String messageChanged = message.replaceAll("\"", "\\\\\"");
         String[] command = {"curl", "-F", "query=\""+messageChanged+"\"", "http://virtuoso_box:8890/sparql"};
         result = curlItLikeBeckam(command);
+        model.addAttribute("ask", message);
         model.addAttribute("answer", result);
         model.addAttribute("graphs", graphs);
         return "queries";
