@@ -11,16 +11,20 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.multipart.MultipartFile;
-import org.springframework.web.servlet.view.RedirectView;
+import org.w3c.dom.Element;
+import org.w3c.dom.Node;
+import org.w3c.dom.NodeList;
+import org.xml.sax.InputSource;
+import org.w3c.dom.Document;
 
 import javax.servlet.http.HttpServletResponse;
+import javax.xml.parsers.DocumentBuilder;
+import javax.xml.parsers.DocumentBuilderFactory;
 import java.io.*;
-import java.lang.reflect.Array;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -56,8 +60,13 @@ public class HomeController {
 
         if(current!=null) {
             //Change TestServices/ to uploadDirectory
-            SoasMapper control = new SoasMapper(uploadDirectory, "openApi3.ttl", "shacl.ttl", PelletReasonerFactory.THE_SPEC, null, "RDF/XML");
-            newProduct = control.PrintOntologyToFile(current);
+            try {
+                SoasMapper control = new SoasMapper(uploadDirectory, "openApi3.ttl", "shacl.ttl", PelletReasonerFactory.THE_SPEC, null, "RDF/XML");
+                newProduct = control.PrintOntologyToFile(current);
+            } catch (NullPointerException e){
+                e.printStackTrace();
+            }
+
         }
 
 
@@ -121,8 +130,44 @@ public class HomeController {
         String messageChanged = message.replaceAll("\"", "\\\\\"");
         String[] command = {"curl", "-F", "query=\""+messageChanged+"\"", "http://virtuoso_box:8890/sparql"};
         result = curlItLikeBeckam(command);
+
+        //
+        DocumentBuilderFactory factory = DocumentBuilderFactory.newInstance();
+        DocumentBuilder builder = null;
+        try
+        {
+            builder = factory.newDocumentBuilder();
+
+            Document doc = builder.parse(new InputSource(new StringReader(result)));
+            doc.getDocumentElement().normalize();
+            NodeList results = doc.getElementsByTagName("binding");
+            NodeList variables = doc.getElementsByTagName("variable");
+
+            int varLength = variables.getLength();
+            String resultString = "";
+            for (int temp =0; temp < results.getLength(); temp+=1){
+                Node nNode = results.item(temp);
+
+                if(nNode.getNodeType() == Node.ELEMENT_NODE){
+                    Element eElement = (Element) nNode;
+                    resultString = resultString + "\nVariable: "
+                            + eElement.getAttribute("name") + "\nValue: "
+                            + eElement.getTextContent();
+                }
+                if(temp != 0 && (temp+1) % varLength == 0 ){
+                    resultString = resultString + "\n";
+                }
+            }
+            model.addAttribute("answer", resultString);
+        }
+        catch (Exception e)
+        {
+            e.printStackTrace();
+            model.addAttribute("answer", result);
+        }
+        //
         model.addAttribute("ask", message);
-        model.addAttribute("answer", result);
+        //model.addAttribute("answer", result);
         model.addAttribute("graphs", graphs);
         return "queries";
     }
