@@ -150,8 +150,8 @@ public class HomeController {
 
                 if(nNode.getNodeType() == Node.ELEMENT_NODE){
                     Element eElement = (Element) nNode;
-                    resultString = resultString + "\nVariable: "
-                            + eElement.getAttribute("name") + "\nValue: "
+                    resultString = resultString + "\n"
+                            + eElement.getAttribute("name") + " ==> "
                             + eElement.getTextContent();
                 }
                 if(temp != 0 && (temp+1) % varLength == 0 ){
