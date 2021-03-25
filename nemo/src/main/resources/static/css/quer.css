@@ -131,3 +131,7 @@ input#sub + label:hover {
   cursor: pointer;
   background-color: rgba(39, 61, 134, 0.8);
 }
+
+.answer textarea {
+    max-width: 1000px;
+}

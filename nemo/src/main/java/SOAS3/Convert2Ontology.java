@@ -1266,10 +1266,12 @@ public class Convert2Ontology {
 		//create a property shape individual for the schemaObject
 		Individual memberInd = createPropertyShape(ontModel, null, null, schemaObject, schemas);
 		//Make this property shape a member of collection
-		//Test
 		ontModel.add(ontModel.createStatement(nodeShapeInd, ontModel.getProperty(OpenApiOntUtils.propertyURI), memberInd));
-		///
-//		ontModel.add(ontModel.createStatement(memberInd, ontModel.getProperty(OpenApiOntUtils.pathURI),ontModel.getProperty(OpenApiOntUtils.memberURI)));
+		ontModel.removeAll(memberInd.getPropertyResourceValue(ontModel.getProperty(OpenApiOntUtils.pathURI)), null, (RDFNode) null);
+		if (memberInd.getPropertyResourceValue(ontModel.getProperty(OpenApiOntUtils.pathURI)) != null){
+			ontModel.remove(memberInd, ontModel.getProperty(OpenApiOntUtils.pathURI), memberInd.getPropertyResourceValue(ontModel.getProperty(OpenApiOntUtils.pathURI)));
+			ontModel.add(ontModel.createStatement(memberInd, ontModel.getProperty(OpenApiOntUtils.pathURI),ontModel.getProperty(OpenApiOntUtils.memberURI)));
+		}
 		return nodeShapeInd;
 	}
 
@@ -1325,15 +1327,16 @@ public class Convert2Ontology {
 				classUri = mappedShapeInd.getPropertyResourceValue(ontModel.getProperty(OpenApiOntUtils.targetClassURI));
 			}
 			else if (schemaObject.getExtensions().get("x-collectionTo")!=null) {
-				//create a class with name "schemaName"
-				//OntClass newClass = ontModel.createClass(schemaName+"Class");
-				OntClass newClass = ontModel.createClass( NS + oldSchemaName);
-				//Set Collection as superClass of our class
-				newClass.addSuperClass(ontModel.getOntClass(OpenApiOntUtils.CollectionClassURI));
 				//Extract the object-member of collection
 				collectionMember = schemaObject.getExtensions().get("x-collectionTo").toString();
-				//Get uri of our class
-				classUri = ResourceFactory.createResource(newClass.getURI());
+				if (oldSchemaName != null){
+					//create a class with name "schemaName"
+					OntClass newClass = ontModel.createClass( NS + oldSchemaName);
+					//Set Collection as superClass of our class
+					newClass.addSuperClass(ontModel.getOntClass(OpenApiOntUtils.CollectionClassURI));
+					//Get uri of our class
+					classUri = ResourceFactory.createResource(newClass.getURI());
+				}
 			}
 
 			//In case of x-refersTo: none nothing will happen
@@ -1368,6 +1371,8 @@ public class Convert2Ontology {
 				//If collection member is same with propertyName set property path
 				//of the property shape to "member"
 				if (propertyEntry.getKey().equals(collectionMember)) {
+					ontModel.removeAll(propertyShapeInd.getPropertyResourceValue(ontModel.getProperty(OpenApiOntUtils.pathURI)), null, (RDFNode) null);
+					ontModel.remove(propertyShapeInd, ontModel.getProperty(OpenApiOntUtils.pathURI), propertyShapeInd.getPropertyResourceValue(ontModel.getProperty(OpenApiOntUtils.pathURI)));
 					ontModel.add(ontModel.createStatement(propertyShapeInd, ontModel.getProperty(OpenApiOntUtils.pathURI), ontModel.getProperty(OpenApiOntUtils.memberURI)));
 				}
 				if(propertyShapeInd != null){
