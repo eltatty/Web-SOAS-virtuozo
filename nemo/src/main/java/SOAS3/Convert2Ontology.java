@@ -853,7 +853,8 @@ public class Convert2Ontology {
 				}
 			} else if (subjectSchema.getExtensions().get("x-kindOf") != null) {
 				// x-kindOf
-				return subjectSchema.getExtensions().get("x-kindOf").toString();
+//				return subjectSchema.getExtensions().get("x-kindOf").toString();
+				return  NS + subject;
 
 			} else if (subjectSchema.getExtensions().get("x-mapsTo") != null) {
 				// x-mapsTo
