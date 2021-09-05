@@ -1002,9 +1002,18 @@ public class Convert2Ontology {
 			schemaName=schemaName+"PropertyShape";
 		}
 
+//		if(ownerName != null){
+//			oldSchemaName=ownerName+"_"+oldSchemaName;
+//			schemaName=ownerName+"_"+schemaName;
+//		}
+
 		if(ownerName != null){
-			oldSchemaName=ownerName+"_"+oldSchemaName;
-			schemaName=ownerName+"_"+schemaName;
+			if (oldSchemaName != null) {
+				oldSchemaName = ownerName + "_" + oldSchemaName;
+			}
+			if (schemaName != null) {
+				schemaName = ownerName + "_" + schemaName;
+			}
 		}
 
 		// Semantic validation
@@ -1268,7 +1277,7 @@ public class Convert2Ontology {
 		Individual memberInd = createPropertyShape(ontModel, null, null, schemaObject, schemas);
 		//Make this property shape a member of collection
 		ontModel.add(ontModel.createStatement(nodeShapeInd, ontModel.getProperty(OpenApiOntUtils.propertyURI), memberInd));
-		ontModel.removeAll(memberInd.getPropertyResourceValue(ontModel.getProperty(OpenApiOntUtils.pathURI)), null, (RDFNode) null);
+//		ontModel.removeAll(memberInd.getPropertyResourceValue(ontModel.getProperty(OpenApiOntUtils.pathURI)), null, (RDFNode) null);
 		if (memberInd.getPropertyResourceValue(ontModel.getProperty(OpenApiOntUtils.pathURI)) != null){
 			ontModel.remove(memberInd, ontModel.getProperty(OpenApiOntUtils.pathURI), memberInd.getPropertyResourceValue(ontModel.getProperty(OpenApiOntUtils.pathURI)));
 			ontModel.add(ontModel.createStatement(memberInd, ontModel.getProperty(OpenApiOntUtils.pathURI),ontModel.getProperty(OpenApiOntUtils.memberURI)));

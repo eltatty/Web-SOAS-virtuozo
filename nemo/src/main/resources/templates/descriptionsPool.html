@@ -1,0 +1,90 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="css/header.css">
+    <link rel="stylesheet" href="css/onto.css">
+    <title>Intelligent Systems Laboratory</title>
+</head>
+<body text="#326690" bgcolor="#ffffff" link="#326690" alink="#326690" vlink="#326690">
+
+<table border="0" width="100%" cellpadding="3" cellspacing="0">
+    <tr><td>
+        <table background="images/header_background.gif" cellpadding=0 cellspacing=0 border=0 width="100%">
+            <tr valign=top height=35>
+                <td class="caption" align=left valign=bottom nowrap>
+                    <b>
+                        &nbsp;S<small>EMANTIC</small> O<small>PEN</small> A<small>PI</small>&nbsp;
+                    </b>
+                </td>
+                <td>&nbsp;</td>
+                <td class="caption2" align=right valign=bottom nowrap>
+                    <b>
+                        <big>D</big>epartment of <big>E</big>lectrical & <big>C</big>omputer <big>E</big>ngineering&nbsp;
+                    </b>
+                </td>
+            </tr>
+            <tr valign=top height=65>
+                <td align=left valign="bottom">
+                    <a href="http://www.intelligence.tuc.gr/index.php"> <img src=images/intelligence.gif alt="Intelligent Systems Laboratory" border=0 width="280" height="60"></a>
+                </td>
+                <td>&nbsp;</td>
+                <td class="ntext" align=right valign=top nowrap>
+                    <b>
+                        &nbsp;<big>T</big>ECHNICAL <big>U</big>NIVERSITY OF <big>C</big>RETE&nbsp;(TUC)&nbsp;
+                    </b>
+                </td>
+            </tr>
+        </table>
+    </td></tr>
+    <tr><td>
+</table>
+        <div class="middle">
+            <div class="side">
+                <h2>Semantic OpenAPI</h2>
+                <ul>
+                    <li><a href="./"><h3>Home</h3></a></li>
+                    <li><a href="ontologies"><h3>Ontologies</h3></a></li>
+                    <li><a href="query"><h3>Queries</h3></a></li>
+                    <li><a href="descriptions"><h3>Descriptions</h3></a></li>
+                    <li><a href="https://dias.library.tuc.gr/view/88861"><h3>Thesis</h3></a></li>
+                    <li><a href="http://www.intelligence.tuc.gr/~petrakis/publications.html"><h3>Papers</h3></a></li>
+                    <li><a href="https://editor.swagger.io/"><h3>Swagger Editor</h3></a></li>
+                    <li><a href="https://converter.swagger.io/"><h3>OpenAPI v3.0 Converter</h3></a></li>
+                </ul>
+            </div>
+            <!-------------------- Different ----------------------->
+            <div class="next_to">
+                <div class="next_to_top">
+                    <h3>Semantic OpenAPI System</h3>
+                </div>
+                <div class="next_to_bottom">
+                    <h4>Descriptions</h4>
+                    <div class="aTable">
+                        <table>
+                            <tr>
+                                <th>Description Name</th>
+                                <th>Size</th>
+                            </tr>
+                            <tr th:each="description: ${descriptions}">
+                                <td><a th:href="@{'./description/'+${description.getName()}}"><span th:text="${description.getName()}"/></a></td>
+                                <td><span th:text="${description.length()/1024}"/><span> KB</span></td>
+                            </tr>
+                        </table>
+                    </div>
+                </div>
+                <!----------------------------------------------------------------------------------------------------------------------->
+                <div class="daddyFooter">
+                    <div class="footer">
+                        <p align="center">OpenAPI descriptions to Ontology <br>
+                            <a href="./">The System</a> | <a href="ontologies">Ontologies</a> | <a href="query">Queries</a> | <a href="http://www.intelligence.tuc.gr/~petrakis/publications.html">Papers</a> | <a href="https://dias.library.tuc.gr/view/88861">Diploma Thesis Bouraimis Fotios</a><br>
+                            &copy;2020<a href='http://www.intelligence.tuc.gr/'>   Intelligent Systems Laboratory</a>, TUC
+                        </p>
+                    </div>
+                </div>
+            </div>
+        </div>
+</body>
+</html>

@@ -46,7 +46,7 @@ public class HomeController {
         String current = null;
         String newProduct = null;
         for(MultipartFile file : files){
-            if (FilenameUtils.getExtension(file.getOriginalFilename()).equals("yaml")){
+            if (FilenameUtils.getExtension(file.getOriginalFilename()).equals("yaml") || FilenameUtils.getExtension(file.getOriginalFilename()).equals("json")){
                 current = FilenameUtils.removeExtension(file.getOriginalFilename());
                 Path fileNameAndPath = Paths.get(uploadDirectory, file.getOriginalFilename());
                 fileNames.append(file.getOriginalFilename());
@@ -59,7 +59,6 @@ public class HomeController {
         }
 
         if(current!=null) {
-            //Change TestServices/ to uploadDirectory
             try {
                 SoasMapper control = new SoasMapper(uploadDirectory, "openApi3.ttl", "shacl.ttl", PelletReasonerFactory.THE_SPEC, null, "RDF/XML");
                 newProduct = control.PrintOntologyToFile(current);
@@ -67,6 +66,15 @@ public class HomeController {
                 e.printStackTrace();
             }
 
+        }
+
+
+        try {
+            File src = new File(uploadDirectory);
+            File dest = new File("Descriptions");
+            FileUtils.copyDirectory(src, dest);
+        } catch (IOException e){
+            e.printStackTrace();
         }
 
 
@@ -90,7 +98,6 @@ public class HomeController {
 
         model.addAttribute("products", product_files);
         model.addAttribute("msg", "Successfully uploaded files " + fileNames.toString());
-        //return "uploadstatusview";
         return "redirect:/ontologies";
     }
 
@@ -100,6 +107,14 @@ public class HomeController {
         File[] product_files = folder.listFiles();
         model.addAttribute("products", product_files);
         return "uploadstatusview";
+    }
+
+    @RequestMapping("/descriptions")
+    public String descriptions(Model model){
+        File folder = new File("Descriptions");
+        File[] description_files = folder.listFiles();
+        model.addAttribute("descriptions", description_files);
+        return "descriptionsPool";
     }
 
     @RequestMapping("/query")
@@ -193,6 +208,29 @@ public class HomeController {
 
         }
     }
+
+    @RequestMapping("/description/{fileName}")
+    @ResponseBody
+    public void show2(@PathVariable("fileName") String fileName, HttpServletResponse response){
+        response.setHeader("Content-Disposition", "attachment; filename=" + fileName);
+        response.setHeader("Content-Transfer-Encoding", "binary");
+        try {
+            BufferedOutputStream bos = new BufferedOutputStream(response.getOutputStream());
+            FileInputStream fis = new FileInputStream("Descriptions" +"/"+ fileName);
+            int len;
+            byte[] buf = new byte[1024];
+            while((len = fis.read(buf)) > 0) {
+                bos.write(buf,0,len);
+            }
+            bos.close();
+            response.flushBuffer();
+        }
+        catch(IOException e) {
+            e.printStackTrace();
+
+        }
+    }
+
 
     public String curlItLikeBeckam(String[] command){
         String result = null;

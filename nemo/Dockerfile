@@ -10,6 +10,8 @@ COPY . /usr/src/nemo
 
 COPY ./Products /usr/src/nemo
 
+COPY ./Descriptions /usr/src/nemo
+
 WORKDIR /usr/src/nemo
 
 EXPOSE 8085
